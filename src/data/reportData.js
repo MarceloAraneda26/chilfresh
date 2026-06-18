@@ -614,16 +614,16 @@ export const reportingModules = modules.map((module) => {
 export const scenarios = {
   pilot: {
     title: "Piloto operativo controlado",
-    range: "410 - 670 HH",
-    calendar: "2,3 a 3,7 meses a 180 HH/mes",
-    description: "Permite validar el flujo minimo con casos reales controlados, sin esperar el cierre integral de todos los modulos financieros.",
+    range: "360 - 540 HH",
+    calendar: "2 a 3 meses a 180 HH/mes",
+    description: "Permite validar el gran hito operativo con casos reales controlados, sin esperar el cierre integral de todos los modulos financieros.",
     rows: [
-      ["Ajustes PL y Shipment Confirmation", 90, 140],
-      ["Pruebas PL real Frutas/Flores", 60, 100],
-      ["Reportes base y versionamiento minimo", 60, 90],
-      ["Facturacion/proforma controlada", 70, 120],
-      ["Datos, permisos y carga minima", 50, 90],
-      ["QA/UAT y material de apoyo", 80, 130],
+      ["Ajustes PL y Shipment Confirmation", 80, 110],
+      ["Pruebas PL real Frutas/Flores", 50, 80],
+      ["Reportes base y versionamiento minimo", 50, 75],
+      ["Facturacion/proforma controlada", 65, 95],
+      ["Datos, permisos y carga minima", 45, 70],
+      ["QA/UAT y material de apoyo", 70, 110],
     ],
   },
   essential: {
@@ -663,8 +663,8 @@ export const scenarios = {
 export const clientScenarioTimeModel = {
   pilot: {
     label: "Con insumos disponibles",
-    value: "2,3 a 3,7 meses",
-    description: "Tiempo restante estimado para validar un flujo minimo con casos reales controlados, calibrado con capacidad mensual base del equipo. Depende de datos, reglas y usuarios clave disponibles por parte de Chilfresh.",
+    value: "2 a 3 meses",
+    description: "Tiempo restante estimado para validar el gran hito operativo con casos reales controlados, calibrado con capacidad mensual base del equipo. Depende de datos, reglas y usuarios clave disponibles por parte de Chilfresh.",
     rows: [
       ["Ajustes PL y Shipment Confirmation", "2 a 3 sem.", "Casos reales PL/SC y excepciones acordadas.", 60],
       ["Pruebas PL real Frutas/Flores", "1 a 2 sem.", "Muestras reales Frutas/Flores y responsables de validacion.", 52],

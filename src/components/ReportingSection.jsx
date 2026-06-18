@@ -252,7 +252,7 @@ function IndicatorsChart({ isClientView, modules }) {
     ["Avance promedio", formatPercent(avgProgress), "Promedio simple de modulos visibles"],
     ["Criticidad media", formatPercent(avgCriticality), "Indice agregado de riesgo funcional"],
     isClientView
-      ? ["Tiempo restante", "2,3 a 7,5 meses", "Piloto o productivo esencial, segun alcance e insumos disponibles"]
+      ? ["Gran hito", "2 a 3 meses", "Piloto operativo controlado, sujeto a insumos y validaciones disponibles"]
       : ["Esfuerzo total ref.", `${totalEffort} HH`, "Continuidad estimada por modulo"],
     ["Criticos/altos", String(highCritical), "Modulos con criticidad sobre 70"],
     ["Foco financiero", String(financialFocus), "Modulos con dependencia financiera o comercial"],
