@@ -9,6 +9,7 @@ export function Hero({ audienceMode, onAudienceModeChange, themeMode, onThemeMod
   const [generatingPptMode, setGeneratingPptMode] = useState(null)
   const [generatingExcel, setGeneratingExcel] = useState(false)
   const isClientView = audienceMode === "client"
+  const reportHref = `${import.meta.env.BASE_URL}Reporte_Assessment_Estimacion_Estado_Real_Chilfresh_2026-06-17.md`
 
   async function handleDownloadPpt(mode) {
     setGeneratingPptMode(mode)
@@ -175,7 +176,7 @@ export function Hero({ audienceMode, onAudienceModeChange, themeMode, onThemeMod
             </div>
           </div>
 
-          <a className="btn primary action-document" href="/Reporte_Assessment_Estimacion_Estado_Real_Chilfresh_2026-06-17.md">
+          <a className="btn primary action-document" href={reportHref}>
             <FileText className="icon" aria-hidden="true" />
             Ver reporte completo
           </a>
