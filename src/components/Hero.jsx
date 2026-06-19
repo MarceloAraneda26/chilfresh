@@ -1,11 +1,11 @@
 import { useState } from "react"
-import { Eye, FileDown, FileText, LayoutDashboard, Menu, Moon, Printer, Settings2, Sun } from "lucide-react"
+import { Eye, FileDown, FileText, Home, LayoutDashboard, Menu, Moon, Printer, Settings2, Sun } from "lucide-react"
 import chilfreshMark from "../assets/brand/chilfresh-mark.png"
 import tiboxMark from "../assets/brand/tibox-mark.png"
 import { downloadTasksExcel } from "../utils/excelExport"
 import { downloadProjectPpt, downloadProjectPptLight } from "../utils/pptExport"
 
-export function Hero({ audienceMode, onAudienceModeChange, themeMode, onThemeModeChange, onMenuClick, onOpenExecutiveSummary }) {
+export function Hero({ audienceMode, onAudienceModeChange, themeMode, onThemeModeChange, onMenuClick, onOpenExecutiveSummary, onGoHome }) {
   const [generatingPptMode, setGeneratingPptMode] = useState(null)
   const [generatingExcel, setGeneratingExcel] = useState(false)
   const isClientView = audienceMode === "client"
@@ -67,6 +67,10 @@ export function Hero({ audienceMode, onAudienceModeChange, themeMode, onThemeMod
             </div>
 
             <div className="utility-actions" aria-label="Utilidades del reporte">
+              <button className="btn" type="button" onClick={onGoHome}>
+                <Home className="icon" aria-hidden="true" />
+                Inicio
+              </button>
               <button className="btn" type="button" onClick={onOpenExecutiveSummary}>
                 <LayoutDashboard className="icon" aria-hidden="true" />
                 Resumen ejecutivo

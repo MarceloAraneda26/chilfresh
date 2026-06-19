@@ -6,6 +6,7 @@ import { ExecutiveSummary } from "./components/ExecutiveSummary"
 import { FlowersSection } from "./components/FlowersSection"
 import { FutureImplementationsSection } from "./components/FutureImplementationsSection"
 import { Hero } from "./components/Hero"
+import { Landing } from "./components/Landing"
 import { MinutesSection } from "./components/MinutesSection"
 import { ModulesSection } from "./components/ModulesSection"
 import { ReportingSection } from "./components/ReportingSection"
@@ -20,7 +21,7 @@ export default function App() {
   const [navOpen, setNavOpen] = useState(false)
   const [activeHref, setActiveHref] = useState("#linea-tiempo")
   const [audienceMode, setAudienceMode] = useState("internal")
-  const [reportMode, setReportMode] = useState("executive")
+  const [reportMode, setReportMode] = useState("landing")
   const [themeMode, setThemeMode] = useState(() => window.localStorage.getItem("chilfresh-report-theme") || "dark")
   useReveal()
 
@@ -48,19 +49,35 @@ export default function App() {
     window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 0)
   }
 
+  function handleGoHome() {
+    setReportMode("landing")
+    setNavOpen(false)
+    window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 0)
+  }
+
   return (
     <div
-      className={`app theme-${themeMode} ${reportMode === "executive" ? "executive-mode" : ""} ${navOpen ? "nav-open" : ""} ${reportMode === "full" && audienceMode === "client" ? "client-view" : ""}`}
+      className={`app theme-${themeMode} ${reportMode === "executive" || reportMode === "landing" ? "executive-mode" : ""} ${navOpen ? "nav-open" : ""} ${reportMode === "full" && audienceMode === "client" ? "client-view" : ""}`}
     >
       {reportMode === "full" && <Sidebar activeHref={activeHref} audienceMode={audienceMode} onNavigate={handleNavigate} />}
       <main className="content">
-        {reportMode === "executive" ? (
+        {reportMode === "landing" && (
+          <Landing
+            themeMode={themeMode}
+            onThemeModeChange={setThemeMode}
+            onOpenReport={handleOpenReport}
+            onOpenExecutiveSummary={handleOpenExecutiveSummary}
+          />
+        )}
+        {reportMode === "executive" && (
           <ExecutiveSummary
             themeMode={themeMode}
             onThemeModeChange={setThemeMode}
             onOpenReport={handleOpenReport}
+            onGoHome={handleGoHome}
           />
-        ) : (
+        )}
+        {reportMode === "full" && (
           <>
             <Hero
               audienceMode={audienceMode}
@@ -69,6 +86,7 @@ export default function App() {
               onThemeModeChange={setThemeMode}
               onMenuClick={() => setNavOpen((value) => !value)}
               onOpenExecutiveSummary={handleOpenExecutiveSummary}
+              onGoHome={handleGoHome}
             />
             <TimelineSection audienceMode={audienceMode} />
             <FlowersSection audienceMode={audienceMode} />

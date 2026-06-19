@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowRight, BarChart3, CheckCircle2, Eye, Leaf, Moon, Settings2, Sun } from "lucide-react"
+import { AlertTriangle, ArrowRight, BarChart3, CheckCircle2, Eye, Home, Leaf, Moon, Settings2, Sun } from "lucide-react"
 import chilfreshMark from "../assets/brand/chilfresh-mark.png"
 import tiboxMark from "../assets/brand/tibox-mark.png"
 import {
@@ -29,7 +29,7 @@ function getModule(name) {
   return modules.find((item) => item.name === name)
 }
 
-export function ExecutiveSummary({ themeMode, onThemeModeChange, onOpenReport }) {
+export function ExecutiveSummary({ themeMode, onThemeModeChange, onOpenReport, onGoHome }) {
   const executiveMilestones = executiveMilestoneIds
     .map((id) => projectMilestones.find((item) => item.id === id))
     .filter(Boolean)
@@ -86,6 +86,10 @@ export function ExecutiveSummary({ themeMode, onThemeModeChange, onOpenReport })
             <div className="toolbar-group versions">
               <span className="action-label">Versiones</span>
               <div className="executive-version-actions">
+                <button className="btn" type="button" onClick={onGoHome}>
+                  <Home className="icon" aria-hidden="true" />
+                  Inicio
+                </button>
                 <button className="btn primary" type="button" onClick={() => onOpenReport("client")}>
                   <Eye className="icon" aria-hidden="true" />
                   Cliente
