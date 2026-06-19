@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { ConclusionsSection } from "./components/ConclusionsSection"
+import { DelayAttributionSection } from "./components/DelayAttributionSection"
 import { EstimationSection } from "./components/EstimationSection"
 import { ExecutiveSummary } from "./components/ExecutiveSummary"
 import { FlowersSection } from "./components/FlowersSection"
@@ -77,6 +78,7 @@ export default function App() {
             <EstimationSection audienceMode={audienceMode} />
             <FutureImplementationsSection audienceMode={audienceMode} />
             <RisksSection audienceMode={audienceMode} />
+            <DelayAttributionSection audienceMode={audienceMode} />
             <MinutesSection audienceMode={audienceMode} />
             <ConclusionsSection audienceMode={audienceMode} />
           </>

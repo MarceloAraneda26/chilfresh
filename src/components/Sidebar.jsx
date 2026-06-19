@@ -2,6 +2,7 @@ import {
   AlertTriangle,
   BarChart3,
   CheckCircle2,
+  Clock3,
   FileText,
   LayoutDashboard,
   Leaf,
@@ -21,12 +22,14 @@ const navItems = [
   { href: "#estimacion", label: "Estimacion", icon: CheckCircle2 },
   { href: "#futuras-implementaciones", label: "Futuras impl.", icon: Rocket },
   { href: "#riesgos", label: "Riesgos", icon: AlertTriangle },
+  { href: "#retrasos-atribuibles", label: "Atrasos", icon: Clock3, internalOnly: true },
   { href: "#minutas", label: "Minutas", icon: ScrollText },
   { href: "#conclusiones", label: "Conclusiones", icon: FileText },
 ]
 
 export function Sidebar({ activeHref, audienceMode, onNavigate }) {
   const isClientView = audienceMode === "client"
+  const visibleNavItems = isClientView ? navItems.filter((item) => !item.internalOnly) : navItems
 
   return (
     <aside className="sidebar" aria-label="Navegacion del reporte interactivo">
@@ -39,7 +42,7 @@ export function Sidebar({ activeHref, audienceMode, onNavigate }) {
       </div>
 
       <nav className="nav">
-        {navItems.map(({ href, label, icon: Icon }) => (
+        {visibleNavItems.map(({ href, label, icon: Icon }) => (
           <a
             className={activeHref === href ? "active" : ""}
             href={href}

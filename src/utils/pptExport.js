@@ -3,15 +3,11 @@ import tiboxMarkUrl from "../assets/brand/tibox-mark.png"
 import {
   clientScenarioTimeModel,
   findings,
-  flowerClosingFactors,
-  flowerLiquidationTypes,
   flowerOverview,
-  flowerTimeline,
   futureImplementationHorizons,
   futureImplementations,
   futureImplementationSummary,
   minuteConsolidated,
-  minuteSummaries,
   modules,
   projectMilestones,
   projectStages,
@@ -21,35 +17,29 @@ import {
 
 const SLIDE_W = 13.333
 const SLIDE_H = 7.5
+const REPORT_DATE = "18 de junio de 2026"
 
 const P = {
   white: "FFFFFF",
   black: "000000",
-  gray: "777777",
-  grayLight: "BFBFBF",
+  gray: "6B7280",
+  grayMid: "777777",
+  grayLight: "D8E3EF",
   navy: "001F4E",
   navyDeep: "001A45",
+  navyCard: "062B5C",
   cyan: "00AEEF",
   orange: "FF7900",
   yellow: "FFD200",
   green: "8CC76A",
   purple: "6B4DBA",
   pink: "E84A8A",
-  softBlue: "EAF7FE",
-  softGray: "F5F7FA",
+  softBlue: "EEF4FA",
+  softGray: "F7F9FC",
   darkText: "D8DEE9",
 }
 
 const dots = [P.pink, P.cyan, P.yellow, P.orange, P.green, P.purple]
-
-const services = [
-  ["NOC", "Infraestructura TI & NOC", P.orange],
-  ["CLOUD", "Soluciones Cloud", P.cyan],
-  ["SOC", "Ciberseguridad & SOC", P.purple],
-  ["AUTO", "Soluciones Inteligentes & Automatizacion", P.yellow],
-  ["AI", "Analitica de Datos & Inteligencia Artificial", P.green],
-  ["TI", "Consultoria TI & Transformacion Digital", P.pink],
-]
 
 const clientHiddenModuleNames = new Set([
   "Pruebas Integradas",
@@ -76,24 +66,25 @@ const clientRiskCopy = {
 }
 
 const clientFindings = [
-  ["El proyecto tiene base real construida", "Hay plataforma de pruebas, mantenedores, logistica, bodega, Packing List base, SII/DTE y avances en Flores. La continuidad debe enfocarse en estabilizar el cierre productivo."],
-  ["El 78% muestra avance relevante", "La cifra global es positiva, pero debe leerse por capas: operacion muy avanzada y modulos financieros con dependencias de cierre."],
-  ["Finanzas concentra el mayor foco", "Liquidaciones, Cuentas Corrientes, Facturacion/Documentos y Contratos dependen de definiciones, integraciones y homologacion Frutas/Flores."],
-]
-
-const clientMinuteLineCopy = new Map([
   [
-    "Ejecutar UAT integral; el nuevo tracking no muestra dato visible de pruebas integradas y mantiene una alerta de calidad.",
-    "Ejecutar validacion integral con casos reales y cierre formal de observaciones.",
+    "El proyecto tiene base real construida",
+    "Hay plataforma de pruebas, mantenedores, logistica, bodega, Packing List base, SII/DTE y avances en Flores. La continuidad debe enfocarse en estabilizar el cierre productivo.",
   ],
-])
+  [
+    "El 78% muestra avance relevante",
+    "La cifra global es positiva, pero debe leerse por capas: operacion muy avanzada y modulos financieros con dependencias de cierre.",
+  ],
+  [
+    "Finanzas concentra el mayor foco",
+    "Liquidaciones, Cuentas Corrientes, Facturacion/Documentos y Contratos dependen de definiciones, integraciones y homologacion Frutas/Flores.",
+  ],
+]
 
 function isClientAudience(audience) {
   return audience === "client"
 }
 
 function sanitizeClientText(text) {
-  if (clientMinuteLineCopy.has(text)) return clientMinuteLineCopy.get(text)
   return String(text)
     .replace(/pruebas integradas/gi, "validacion integral")
     .replace(/tracking/gi, "seguimiento")
@@ -115,10 +106,6 @@ function deckRisks(audience) {
     : risks
 }
 
-function scenarioDescription(key, scenario, audience) {
-  return isClientAudience(audience) ? clientScenarioTimeModel[key].description : scenario.description
-}
-
 function deckFindings(audience) {
   return isClientAudience(audience) ? clientFindings : findings
 }
@@ -126,6 +113,10 @@ function deckFindings(audience) {
 function shortText(text, max = 130) {
   const value = String(text)
   return value.length > max ? `${value.slice(0, max - 1).trim()}...` : value
+}
+
+function moduleValue(module) {
+  return module.display || `${module.progress}%`
 }
 
 async function imageToDataUri(url) {
@@ -188,19 +179,36 @@ function setupPresentation(pptxgen, mode) {
   return pptx
 }
 
+function isLight(mode) {
+  return mode === "light"
+}
+
 function textColor(mode, secondary = false) {
-  if (mode === "dark") return secondary ? P.darkText : P.white
-  return secondary ? P.gray : P.black
+  if (isLight(mode)) return secondary ? P.gray : P.black
+  return secondary ? P.darkText : P.white
+}
+
+function titleColor(mode) {
+  return isLight(mode) ? P.navy : P.white
+}
+
+function cardFill(mode, alt = false) {
+  if (isLight(mode)) return alt ? P.softGray : P.white
+  return alt ? P.navyDeep : P.navyCard
+}
+
+function cardLine(mode) {
+  return isLight(mode) ? P.grayLight : "31557A"
 }
 
 function addFooterBand(slide) {
   const y = 7.36
   const h = 0.14
   const blocks = [
-    [-0.2, 2.55, P.orange],
-    [2.08, 3.35, P.yellow],
-    [5.18, 3.72, P.cyan],
-    [8.6, 4.95, P.navy],
+    [-0.18, 2.72, P.orange],
+    [2.22, 3.4, P.yellow],
+    [5.34, 3.72, P.cyan],
+    [8.74, 4.88, P.navy],
   ]
   blocks.forEach(([x, w, color]) => {
     slide.addShape("parallelogram", {
@@ -217,10 +225,10 @@ function addFooterBand(slide) {
 function addColorDots(slide, x, y) {
   dots.forEach((color, index) => {
     slide.addShape("ellipse", {
-      x: x + index * 0.15,
+      x: x + index * 0.16,
       y,
-      w: 0.07,
-      h: 0.07,
+      w: 0.075,
+      h: 0.075,
       fill: { color },
       line: { color, transparency: 100 },
     })
@@ -228,30 +236,30 @@ function addColorDots(slide, x, y) {
 }
 
 function addContactPills(slide, mode, x, y, centered = false) {
-  const fill = mode === "dark" ? P.navyDeep : P.navy
-  const line = mode === "dark" ? P.white : P.navy
-  const w = 1.35
-  const gap = 0.12
+  const fill = isLight(mode) ? P.navy : P.navyDeep
+  const line = isLight(mode) ? P.navy : P.white
+  const w = 1.32
+  const gap = 0.13
   const startX = centered ? x - (w * 2 + gap) / 2 : x
   ;[
-    ["www.tibox.cl", 0],
-    ["LinkedIn / Tibox", 1],
+    ["tibox.cl", 0],
+    ["LinkedIn TIBOX", 1],
   ].forEach(([label, index]) => {
     slide.addShape("roundRect", {
       x: startX + index * (w + gap),
       y,
       w,
-      h: 0.24,
-      fill: { color: fill, transparency: mode === "dark" ? 100 : 0 },
-      line: { color: line, transparency: mode === "dark" ? 0 : 100, width: 0.7 },
+      h: 0.28,
+      fill: { color: fill, transparency: isLight(mode) ? 0 : 100 },
+      line: { color: line, transparency: isLight(mode) ? 100 : 0, width: 0.75 },
     })
     slide.addText(label, {
       x: startX + index * (w + gap),
-      y: y + 0.055,
+      y: y + 0.075,
       w,
-      h: 0.1,
+      h: 0.11,
       color: P.white,
-      fontSize: 6.8,
+      fontSize: 7.2,
       bold: true,
       align: "center",
       margin: 0,
@@ -260,75 +268,101 @@ function addContactPills(slide, mode, x, y, centered = false) {
   })
 }
 
-function addLogo(slide, logos, mode, x, y, scale = 1, centered = false) {
-  const mark = mode === "dark" ? logos.tiboxWhite : logos.tibox
-  const markW = 0.5 * scale
-  const textW = 1.05 * scale
-  const groupW = markW + 0.14 * scale + textW
-  const startX = centered ? x - groupW / 2 : x
-  slide.addImage({ data: mark, x: startX, y, w: markW, h: markW })
+function addBrandLockup(slide, logos, mode, x, y, scale = 1, centered = false) {
+  const tiboxMark = isLight(mode) ? logos.tibox : logos.tiboxWhite
+  const mark = 0.38 * scale
+  const startX = centered ? x - 1.72 * scale : x
+  const tiboxTextColor = isLight(mode) ? P.black : P.white
+  const chilTextColor = isLight(mode) ? P.navy : P.white
+
+  slide.addImage({ data: tiboxMark, x: startX, y, w: mark, h: mark })
   slide.addText("TIBOX", {
-    x: startX + markW + 0.14 * scale,
-    y: y + 0.12 * scale,
-    w: textW,
-    h: 0.2 * scale,
-    color: mode === "dark" ? P.white : P.navy,
-    fontSize: 15 * scale,
+    x: startX + mark + 0.1 * scale,
+    y: y + 0.09 * scale,
+    w: 0.82 * scale,
+    h: 0.18 * scale,
+    color: tiboxTextColor,
+    fontSize: 12.2 * scale,
     bold: true,
+    margin: 0,
+    fit: "shrink",
+  })
+  slide.addShape("line", {
+    x: startX + 1.26 * scale,
+    y: y - 0.01 * scale,
+    w: 0,
+    h: 0.38 * scale,
+    line: { color: isLight(mode) ? P.grayLight : "54759A", width: 0.65 },
+  })
+  slide.addImage({
+    data: logos.chilfresh,
+    x: startX + 1.43 * scale,
+    y: y - 0.01 * scale,
+    w: mark,
+    h: mark,
+  })
+  slide.addText("CHIL", {
+    x: startX + 1.86 * scale,
+    y: y + 0.095 * scale,
+    w: 0.36 * scale,
+    h: 0.16 * scale,
+    color: chilTextColor,
+    fontSize: 10 * scale,
+    bold: true,
+    margin: 0,
+    fit: "shrink",
+  })
+  slide.addText("fresh", {
+    x: startX + 2.22 * scale,
+    y: y + 0.075 * scale,
+    w: 0.58 * scale,
+    h: 0.18 * scale,
+    color: isLight(mode) ? "00910A" : P.green,
+    fontSize: 11.2 * scale,
     margin: 0,
     fit: "shrink",
   })
 }
 
 function addTopChrome(slide, logos, mode) {
-  addLogo(slide, logos, mode, 0.55, 0.36, 0.72)
-  addColorDots(slide, 9.4, 0.43)
-  addContactPills(slide, mode, 10.45, 0.34)
+  addBrandLockup(slide, logos, mode, 0.72, 0.32, 0.78)
+  addColorDots(slide, 9.32, 0.42)
+  addContactPills(slide, mode, 10.38, 0.32)
 }
 
 function addBase(slide, mode, logos, internal = true) {
-  slide.background = { color: mode === "dark" ? P.navy : P.white }
-  if (mode === "light") {
-    slide.addShape("rect", {
-      x: 0,
-      y: 0,
-      w: SLIDE_W,
-      h: SLIDE_H,
-      fill: { color: P.white },
-      line: { color: P.white },
-    })
-  } else {
-    slide.addShape("rect", {
-      x: 0,
-      y: 0,
-      w: SLIDE_W,
-      h: SLIDE_H,
-      fill: { color: P.navy },
-      line: { color: P.navy },
-    })
-  }
+  const bg = isLight(mode) ? P.white : P.navy
+  slide.background = { color: bg }
+  slide.addShape("rect", {
+    x: 0,
+    y: 0,
+    w: SLIDE_W,
+    h: SLIDE_H,
+    fill: { color: bg },
+    line: { color: bg },
+  })
   if (internal) addTopChrome(slide, logos, mode)
   addFooterBand(slide)
 }
 
 function addTitle(slide, title, subtitle, mode) {
   slide.addText(title, {
-    x: 0.82,
-    y: 1.18,
-    w: 7.2,
+    x: 0.72,
+    y: 1.02,
+    w: 7.8,
     h: 0.42,
-    color: textColor(mode),
+    color: titleColor(mode),
     fontFace: "Aptos Display",
-    fontSize: 23,
+    fontSize: 24.5,
     bold: true,
     margin: 0,
     fit: "shrink",
   })
   if (subtitle) {
     slide.addText(subtitle, {
-      x: 0.84,
-      y: 1.66,
-      w: 7.8,
+      x: 0.74,
+      y: 1.5,
+      w: 8.25,
       h: 0.22,
       color: textColor(mode, true),
       fontSize: 10.5,
@@ -338,133 +372,56 @@ function addTitle(slide, title, subtitle, mode) {
   }
 }
 
-function addServiceIcon(slide, item, x, y, mode, label = false, size = 0.62) {
-  const [code, name, color] = item
-  slide.addShape("ellipse", {
-    x: x + 0.05,
-    y: y + 0.08,
-    w: size,
-    h: size,
-    fill: { color, transparency: 16 },
-    line: { color, transparency: 100 },
-  })
-  slide.addShape("cube", {
-    x,
-    y,
-    w: size,
-    h: size,
-    fill: { color },
-    line: { color, transparency: 100 },
-  })
-  slide.addText(code, {
-    x: x + 0.04,
-    y: y + size * 0.42,
-    w: size * 0.92,
-    h: 0.16,
-    color: P.white,
-    fontSize: size > 0.65 ? 8.5 : 6.5,
-    bold: true,
-    align: "center",
-    margin: 0,
-    fit: "shrink",
-  })
-  if (label) {
-    slide.addText(name, {
-      x: x - 0.38,
-      y: y + size + 0.18,
-      w: size + 0.76,
-      h: 0.34,
-      color: textColor(mode),
-      fontSize: 8.2,
-      bold: true,
-      align: "center",
-      margin: 0,
-      fit: "shrink",
-    })
-  }
-}
-
-function addServiceRow(slide, mode, y = 5.88, x = 0.78, size = 0.38) {
-  services.forEach((service, index) => {
-    addServiceIcon(slide, service, x + index * 0.58, y, mode, false, size)
-  })
-}
-
-function addMinimalPanel(slide, mode, x, y, w, h, title, body, accent = P.cyan) {
-  const light = mode === "light"
+function addCard(slide, mode, x, y, w, h, title, body, accent = P.cyan, options = {}) {
+  const fill = options.fill || cardFill(mode, options.alt)
   slide.addShape("roundRect", {
     x,
     y,
     w,
     h,
-    fill: { color: light ? P.white : P.navyDeep, transparency: light ? 0 : 8 },
-    line: { color: light ? "E6EAF0" : P.white, transparency: light ? 0 : 80, width: 0.7 },
+    fill: { color: fill, transparency: isLight(mode) ? 0 : 5 },
+    line: { color: options.line || cardLine(mode), transparency: isLight(mode) ? 0 : 35, width: 0.8 },
+    radius: 0.18,
   })
   slide.addShape("rect", {
-    x,
-    y,
-    w,
-    h: 0.04,
+    x: x + 0.14,
+    y: y + 0.13,
+    w: w - 0.28,
+    h: 0.045,
     fill: { color: accent },
     line: { color: accent, transparency: 100 },
   })
   slide.addText(title, {
     x: x + 0.18,
-    y: y + 0.18,
+    y: y + 0.28,
     w: w - 0.36,
-    h: 0.2,
-    color: textColor(mode),
-    fontSize: 11.2,
+    h: options.titleH || 0.28,
+    color: options.titleColor || titleColor(mode),
+    fontSize: options.titleSize || 12,
     bold: true,
     margin: 0,
     fit: "shrink",
   })
-  slide.addText(shortText(body, 150), {
+  slide.addText(shortText(body, options.max || 175), {
     x: x + 0.18,
-    y: y + 0.52,
+    y: y + (options.bodyY || 0.66),
     w: w - 0.36,
-    h: h - 0.62,
-    color: textColor(mode, true),
-    fontSize: 9.2,
+    h: h - (options.bodyY || 0.66) - 0.15,
+    color: options.bodyColor || textColor(mode, true),
+    fontSize: options.bodySize || 9.2,
+    breakLine: false,
     margin: 0,
     fit: "shrink",
   })
 }
 
-function addBullets(slide, mode, items, x, y, w, gap = 0.46) {
-  items.forEach((item, index) => {
-    slide.addShape("ellipse", {
-      x,
-      y: y + index * gap + 0.03,
-      w: 0.09,
-      h: 0.09,
-      fill: { color: index === items.length - 1 ? P.orange : P.cyan },
-      line: { color: index === items.length - 1 ? P.orange : P.cyan },
-    })
-    slide.addText(shortText(item, 135), {
-      x: x + 0.22,
-      y: y + index * gap,
-      w,
-      h: 0.22,
-      color: textColor(mode, index !== 0),
-      fontSize: 11.2,
-      bold: index === 0,
-      margin: 0,
-      fit: "shrink",
-    })
-  })
-}
-
-function addCover(pptx, logos, mode) {
-  const slide = pptx.addSlide()
-  addBase(slide, mode, logos, false)
-  addLogo(slide, logos, mode, SLIDE_W / 2, 0.6, 0.95, true)
-  slide.addText("PROYECTO CHILFRESH", {
-    x: 0.92,
-    y: 2.55,
-    w: 11.5,
-    h: 0.44,
-    color: textColor(mode),
+function addKpi(slide, mode, x, y, value, label, accent = P.cyan, w = 1.9) {
+  slide.addText(value, {
+    x,
+    y,
+    w,
+    h: 0.45,
+    color: accent,
     fontFace: "Aptos Display",
     fontSize: 28,
     bold: true,
@@ -472,364 +429,321 @@ function addCover(pptx, logos, mode) {
     margin: 0,
     fit: "shrink",
   })
-  slide.addText("Reporte ejecutivo de assessment, estimacion y estado real", {
-    x: 2.05,
-    y: 3.14,
-    w: 9.2,
-    h: 0.25,
+  slide.addText(label, {
+    x,
+    y: y + 0.52,
+    w,
+    h: 0.2,
     color: textColor(mode, true),
-    fontSize: 12.8,
+    fontSize: 8.8,
     align: "center",
     margin: 0,
     fit: "shrink",
   })
-  slide.addText("18 de junio de 2026", {
-    x: 4.75,
-    y: 6.72,
-    w: 3.8,
+}
+
+function addCover(pptx, logos, mode) {
+  const slide = pptx.addSlide()
+  addBase(slide, mode, logos, false)
+  addBrandLockup(slide, logos, mode, SLIDE_W / 2, 0.56, 1.08, true)
+
+  slide.addText("PROYECTO CHILFRESH", {
+    x: 1,
+    y: 2.35,
+    w: 11.35,
+    h: 0.52,
+    color: titleColor(mode),
+    fontFace: "Aptos Display",
+    fontSize: 33,
+    bold: true,
+    align: "center",
+    margin: 0,
+    fit: "shrink",
+  })
+  slide.addText("Reporte ejecutivo de assessment, estado real y continuidad", {
+    x: 2,
+    y: 3.02,
+    w: 9.35,
+    h: 0.28,
+    color: textColor(mode, true),
+    fontSize: 14.2,
+    align: "center",
+    margin: 0,
+    fit: "shrink",
+  })
+
+  addCard(
+    slide,
+    mode,
+    4.3,
+    3.92,
+    4.75,
+    0.88,
+    "78%",
+    "avance global con capa operacional consolidada y cierre financiero por validar",
+    P.green,
+    { titleSize: 24, titleH: 0.36, bodySize: 9.4, bodyY: 0.33, max: 115, fill: isLight(mode) ? P.softGray : P.navyCard },
+  )
+
+  slide.addText(REPORT_DATE, {
+    x: 4.7,
+    y: 6.55,
+    w: 3.95,
     h: 0.18,
     color: textColor(mode, true),
     fontSize: 9,
     align: "center",
     margin: 0,
   })
-  addServiceRow(slide, mode, 6.3, 0.78, 0.35)
-  addColorDots(slide, 9.24, 6.24)
-  addContactPills(slide, mode, 10.1, 6.16)
+  addColorDots(slide, 9.55, 6.2)
+  addContactPills(slide, mode, 10.35, 6.12)
 }
 
-function addServicesSlide(pptx, logos, mode) {
-  const slide = pptx.addSlide()
-  addBase(slide, mode, logos, false)
-  addLogo(slide, logos, mode, SLIDE_W / 2, 1.18, mode === "dark" ? 1.35 : 1.15, true)
-  slide.addText("Equipo de desarrollo y liderazgo del proyecto", {
-    x: 2.2,
-    y: 2.1,
-    w: 8.95,
-    h: 0.2,
-    color: textColor(mode, true),
-    fontSize: 11,
-    align: "center",
-    margin: 0,
-  })
-  const start = 1.05
-  services.forEach((service, index) => {
-    addServiceIcon(slide, service, start + index * 1.9, 3.16, mode, true, 0.78)
-  })
-  addColorDots(slide, 5.88, 5.82)
-  addContactPills(slide, mode, SLIDE_W / 2, 6.02, true)
-}
-
-function addSummary(pptx, logos, mode, audience) {
+function addExecutiveSummary(pptx, logos, mode, audience) {
   const slide = pptx.addSlide()
   const client = isClientAudience(audience)
   const visibleModules = deckModules(audience)
   addBase(slide, mode, logos)
-  addTitle(
-    slide,
-    "Resumen ejecutivo",
-    client
-      ? "Avance alto, base operativa consolidada y foco de cierre financiero."
-      : "Avance alto, distribucion desigual y riesgo concentrado en definiciones financieras.",
-    mode,
-  )
+  addTitle(slide, "Resumen ejecutivo", "Lectura gerencial del sitio: avance construido, foco de cierre y ruta recomendada.", mode)
+
+  const cards = [
+    [
+      "Base operacional construida",
+      "Base, mantenedores, logistica, bodega y flujos documentales ya sostienen la operacion principal.",
+      P.cyan,
+    ],
+    [
+      "Avance alto, no homogeneo",
+      "El 78% global es positivo, pero esconde una distribucion desigual: operacion fuerte y finanzas con dependencias.",
+      P.orange,
+    ],
+    [
+      "Ruta recomendada",
+      client
+        ? "Piloto operativo controlado en horizonte 2 a 3 meses, sujeto a insumos y validaciones disponibles."
+        : "Piloto operativo controlado antes de perseguir cierre integral de todos los modulos financieros.",
+      P.green,
+    ],
+  ]
+
+  cards.forEach(([title, body, accent], index) => {
+    addCard(slide, mode, 0.75 + index * 4.1, 2.0, 3.45, 1.75, title, body, accent, { bodySize: 9.4, max: 165 })
+  })
+
   const stats = [
-    ["78%", "Avance global actualizado"],
-    [`${projectMilestones.length}`, "Hitos trazados"],
-    [`${visibleModules.length}`, client ? "Modulos visibles" : "Modulos analizados"],
-    [client ? "Piloto" : "25", client ? "Ruta sugerida" : "Tareas sin duracion"],
+    ["78%", "avance global"],
+    [`${projectMilestones.length}`, "hitos trazados"],
+    [`${visibleModules.length}`, client ? "modulos visibles" : "modulos analizados"],
+    [client ? "2-3" : "Piloto", client ? "meses gran hito" : "ruta sugerida"],
   ]
   stats.forEach(([value, label], index) => {
-    const x = 1.1 + index * 3.02
-    slide.addText(value, {
-      x,
-      y: 2.48,
-      w: 2.1,
-      h: 0.48,
-      color: index === 3 ? P.orange : P.cyan,
-      fontFace: "Aptos Display",
-      fontSize: 30,
-      bold: true,
-      align: "center",
-      margin: 0,
-    })
-    slide.addText(label, {
-      x,
-      y: 3.04,
-      w: 2.1,
-      h: 0.18,
-      color: textColor(mode, true),
-      fontSize: 9.5,
-      align: "center",
-      margin: 0,
-      fit: "shrink",
-    })
+    addKpi(slide, mode, 1.25 + index * 2.75, 4.42, value, label, index === 3 ? P.orange : P.cyan, 1.9)
   })
-  addBullets(slide, mode, [
-    "La capa operativa esta construida y validada en gran medida.",
-    "Los modulos financieros criticos concentran el riesgo real.",
-    client
-      ? "La ruta sugerida es avanzar con piloto controlado y validacion funcional."
-      : "El 78% no debe interpretarse como cierre homogeneo del proyecto.",
-  ], 1.3, 4.22, 10.4, 0.52)
+
+  addCard(
+    slide,
+    mode,
+    2.05,
+    5.85,
+    9.25,
+    0.55,
+    "Lectura central",
+    "El proyecto no esta detenido: esta en etapa de convertir desarrollo construido en flujo validado, con decisiones de negocio cerradas y casos reales.",
+    P.cyan,
+    { titleSize: 8.6, bodySize: 8.7, bodyY: 0.2, max: 190, alt: true },
+  )
 }
 
-function addTimeline(pptx, logos, mode) {
+function addContext(pptx, logos, mode, audience) {
   const slide = pptx.addSlide()
+  const client = isClientAudience(audience)
   addBase(slide, mode, logos)
-  addTitle(slide, "Linea de tiempo por hitos", "Historia de decisiones, avances y pendientes, no solo cronograma de plazos.", mode)
-  const y = 3.2
+  addTitle(slide, "Contexto general", "El sitio consolida assessment, hitos, minutas, avances, riesgos y continuidad.", mode)
+
+  addCard(
+    slide,
+    mode,
+    0.78,
+    1.92,
+    4.2,
+    2.55,
+    "Proposito del proyecto",
+    "Consolidar procesos comerciales, logisticos, productivos y financieros en una plataforma unica, reduciendo dispersion de datos y aumentando trazabilidad entre areas.",
+    P.cyan,
+    { bodySize: 10, max: 210 },
+  )
+
+  addCard(
+    slide,
+    mode,
+    5.28,
+    1.92,
+    3.35,
+    2.55,
+    "Lectura de minutas",
+    sanitizeClientText(minuteConsolidated.focus),
+    P.green,
+    { bodySize: 9.2, max: 210 },
+  )
+
+  addCard(
+    slide,
+    mode,
+    8.95,
+    1.92,
+    3.45,
+    2.55,
+    "Flores",
+    client
+      ? "Se incorporo progresivamente desde fines de 2025; hoy cuenta con base funcional y requiere validacion de particularidades."
+      : flowerOverview.context,
+    P.orange,
+    { bodySize: 9.1, max: 210 },
+  )
+
+  const x0 = 1.1
+  const y = 5.28
   slide.addShape("line", {
-    x: 0.92,
+    x: x0,
     y,
-    w: 11.45,
+    w: 10.95,
     h: 0,
-    line: { color: mode === "dark" ? P.white : P.grayLight, transparency: mode === "dark" ? 35 : 0, width: 1.2 },
+    line: { color: isLight(mode) ? P.grayLight : "54759A", width: 1.1, transparency: isLight(mode) ? 0 : 30 },
   })
-  projectStages.forEach((stage, index) => {
-    const x = 0.92 + index * 2.28
-    const pending = stage.key === "pendiente"
+  projectStages.slice(0, 5).forEach((stage, index) => {
+    const x = x0 + index * 2.72
     slide.addShape("ellipse", {
-      x: x - 0.08,
-      y: y - 0.08,
-      w: 0.16,
-      h: 0.16,
-      fill: { color: pending ? P.orange : P.cyan },
-      line: { color: pending ? P.orange : P.cyan },
+      x: x - 0.075,
+      y: y - 0.075,
+      w: 0.15,
+      h: 0.15,
+      fill: { color: index > 2 ? P.green : P.cyan },
+      line: { color: index > 2 ? P.green : P.cyan },
     })
     slide.addText(stage.title, {
-      x: x - 0.55,
-      y: index % 2 === 0 ? 2.18 : 3.55,
-      w: 1.3,
-      h: 0.34,
-      color: textColor(mode),
-      fontSize: 9.2,
+      x: x - 0.58,
+      y: y + 0.22,
+      w: 1.2,
+      h: 0.26,
+      color: titleColor(mode),
+      fontSize: 8.8,
       bold: true,
       align: "center",
       margin: 0,
       fit: "shrink",
     })
     slide.addText(stage.range, {
-      x: x - 0.55,
-      y: index % 2 === 0 ? 2.58 : 3.95,
-      w: 1.3,
+      x: x - 0.58,
+      y: y + 0.57,
+      w: 1.2,
       h: 0.16,
-      color: pending ? P.orange : textColor(mode, true),
-      fontSize: 7.8,
+      color: textColor(mode, true),
+      fontSize: 7.4,
       align: "center",
       margin: 0,
       fit: "shrink",
     })
   })
-  slide.addText("El proyecto evoluciona desde levantamiento y datos maestros hacia operacion documental, finanzas, estado real y margen pendiente de cierre.", {
-    x: 1.45,
-    y: 5.18,
-    w: 10.45,
-    h: 0.42,
-    color: textColor(mode),
-    fontSize: 15,
-    bold: true,
-    align: "center",
-    margin: 0,
-    fit: "shrink",
-  })
 }
 
-function addFlowers(pptx, logos, mode, audience) {
+function addSiteStructure(pptx, logos, mode) {
   const slide = pptx.addSlide()
-  const client = isClientAudience(audience)
   addBase(slide, mode, logos)
-  addTitle(
-    slide,
-    "Flores: incorporacion y avances",
-    client
-      ? "Base funcional implementada, con validacion operativa y financiera pendiente."
-      : "Implementacion parcial; requiere mesa exclusiva para revalidar flujo completo y reglas propias.",
-    mode,
-  )
+  addTitle(slide, "Estructura del informe web", "La PPT reorganiza el contenido del sitio en una narrativa ejecutiva.", mode)
 
-  addMinimalPanel(
-    slide,
-    mode,
-    0.95,
-    1.92,
-    4.05,
-    1.7,
-    "Contexto",
-    shortText(flowerOverview.context, 245),
-    P.cyan,
-  )
-
-  const metrics = [
-    [flowerOverview.progress, "Avance estimado"],
-    [flowerOverview.risk, "Riesgo"],
-    [`${flowerLiquidationTypes.length}`, "Liquidaciones"],
+  const sections = [
+    ["Resumen ejecutivo", "lectura gerencial"],
+    ["Linea de tiempo", "hitos y decisiones"],
+    ["Flores", "avance y validacion"],
+    ["Modulos", "estado funcional"],
+    ["Reporteria", "indicadores clave"],
+    ["Estimacion", "continuidad"],
+    ["Futuras implementaciones", "roadmap posterior"],
+    ["Riesgos y minutas", "puntos de atencion"],
   ]
-  metrics.forEach(([value, label], index) => {
-    const x = 0.95 + index * 1.35
-    slide.addText(value, {
-      x,
-      y: 4.05,
-      w: 1.18,
-      h: 0.32,
-      color: index === 1 ? P.orange : P.cyan,
-      fontSize: 17,
-      bold: true,
-      align: "center",
-      margin: 0,
-      fit: "shrink",
-    })
-    slide.addText(label, {
-      x: x - 0.04,
-      y: 4.43,
-      w: 1.26,
-      h: 0.16,
-      color: textColor(mode, true),
-      fontSize: 7.5,
-      align: "center",
-      margin: 0,
-      fit: "shrink",
-    })
+  sections.forEach(([title, body], index) => {
+    const col = index % 4
+    const row = Math.floor(index / 4)
+    addCard(
+      slide,
+      mode,
+      0.78 + col * 3.12,
+      2.02 + row * 1.72,
+      2.52,
+      1.18,
+      title,
+      body,
+      [P.cyan, P.green, P.orange, P.yellow][col],
+      { bodySize: 8.6, max: 70 },
+    )
   })
 
-  const timelineItems = [
-    flowerTimeline[0],
-    flowerTimeline[1],
-    flowerTimeline[2],
-    flowerTimeline[4],
-    flowerTimeline[5],
-    flowerTimeline[7],
-  ]
-  timelineItems.forEach((item, index) => {
-    const y = 1.86 + index * 0.58
-    slide.addText(item.date, {
-      x: 5.55,
-      y,
-      w: 1.05,
-      h: 0.18,
-      color: item.tone === "pending" ? P.orange : P.cyan,
-      fontSize: 8,
-      bold: true,
-      margin: 0,
-      fit: "shrink",
-    })
-    slide.addText(item.title, {
-      x: 6.7,
-      y,
-      w: 4.85,
-      h: 0.18,
-      color: textColor(mode),
-      fontSize: 8.8,
-      bold: true,
-      margin: 0,
-      fit: "shrink",
-    })
-    slide.addText(shortText(item.summary, 110), {
-      x: 6.7,
-      y: y + 0.2,
-      w: 5.02,
-      h: 0.15,
-      color: textColor(mode, true),
-      fontSize: 7.2,
-      margin: 0,
-      fit: "shrink",
-    })
-  })
-
-  addMinimalPanel(
+  addCard(
     slide,
     mode,
-    0.95,
-    5.18,
-    4.05,
-    0.95,
-    "Cierre requerido",
-    flowerClosingFactors.join("\n"),
-    P.orange,
-  )
-  addMinimalPanel(
-    slide,
-    mode,
+    1.65,
     5.55,
-    5.18,
-    6.25,
-    0.95,
-    "Lectura",
-    "El riesgo principal no es solo desarrollo: depende de definiciones internas Chilfresh, costos reales y alineacion Flores/Frutas.",
+    10.05,
+    0.66,
+    "Criterio de conversion a PPT",
+    "Se sintetizan secciones extensas del sitio, se eliminan elementos de gestion interna en vista cliente y se priorizan bloques, KPIs y lineas de tiempo simples.",
     P.cyan,
+    { titleSize: 8.7, bodySize: 8.5, bodyY: 0.21, max: 185, alt: true },
   )
 }
 
-function addModules(pptx, logos, mode, audience) {
+function addGeneralState(pptx, logos, mode, audience) {
   const slide = pptx.addSlide()
   const client = isClientAudience(audience)
   const visibleModules = deckModules(audience)
   addBase(slide, mode, logos)
-  addTitle(
-    slide,
-    client ? "Estado ejecutivo por modulo" : "Estado por modulo",
-    client
-      ? "Vista filtrada para componentes funcionales y focos de cierre."
-      : "La lectura real muestra una brecha entre operacion consolidada y finanzas pendientes.",
-    mode,
-  )
-  slide.addText("78%", {
-    x: 0.95,
-    y: 2.28,
-    w: 2.6,
-    h: 0.72,
-    color: P.cyan,
-    fontFace: "Aptos Display",
-    fontSize: 46,
-    bold: true,
-    align: "center",
-    margin: 0,
-  })
-  slide.addText("avance global", {
-    x: 0.95,
-    y: 3.12,
-    w: 2.6,
-    h: 0.2,
-    color: textColor(mode, true),
-    fontSize: 11,
-    align: "center",
-    margin: 0,
-  })
-  const strong = visibleModules.filter((mod) => mod.progress >= 78).slice(0, 6).map((mod) => `${mod.name} (${mod.display || `${mod.progress}%`})`)
-  const critical = visibleModules.filter((mod) => mod.progress < 60).slice(0, 6).map((mod) => `${mod.name} (${mod.display || `${mod.progress}%`})`)
-  addMinimalPanel(slide, mode, 4.0, 2.02, 3.7, 3.25, "Mas solido", strong.join("\n"), P.cyan)
-  addMinimalPanel(slide, mode, 8.05, 2.02, 3.85, 3.25, client ? "Focos de cierre" : "Mas critico", critical.join("\n"), P.orange)
-}
+  addTitle(slide, "Estado general", "Alto avance global con distribucion desigual entre capa operativa y cierre financiero.", mode)
 
-function addEstimation(pptx, logos, mode, audience) {
-  const slide = pptx.addSlide()
-  const client = isClientAudience(audience)
-  addBase(slide, mode, logos)
-  addTitle(
+  addCard(
     slide,
-    client ? "Estimacion de continuidad" : "Estimacion de trabajo",
-    client
-      ? "Escenarios referenciales para priorizacion y formalizacion de alcance."
-      : "Escenarios referenciales para convertir avance construido en readiness productiva.",
     mode,
+    0.82,
+    1.95,
+    3.0,
+    3.35,
+    "78%",
+    "avance global tracker. La lectura real separa software construido de validacion funcional completa.",
+    P.green,
+    { titleSize: 36, titleH: 0.62, bodySize: 10.2, bodyY: 1.02, max: 150, alt: true },
   )
-  Object.entries(scenarios).forEach(([key, scenario], index) => {
-    const x = 0.95 + index * 4.1
-    const clientTime = clientScenarioTimeModel[key]
-    const body = client
-      ? `${clientTime.value}\n${clientTime.label}\n${shortText(scenarioDescription(key, scenario, audience), 105)}`
-      : `${scenario.range}\n${scenario.calendar}\n${shortText(scenarioDescription(key, scenario, audience), 105)}`
-    addMinimalPanel(slide, mode, x, 2.05, 3.35, 2.9, scenario.title, body, index === 0 ? P.orange : P.cyan)
-  })
+
+  const strong = visibleModules
+    .filter((mod) => mod.progress >= 78)
+    .slice(0, 6)
+    .map((mod) => `${mod.name} (${moduleValue(mod)})`)
+  const critical = visibleModules
+    .filter((mod) => mod.progress < 60)
+    .slice(0, 6)
+    .map((mod) => `${mod.name} (${moduleValue(mod)})`)
+
+  addCard(slide, mode, 4.18, 1.95, 3.85, 3.35, "Mas solido", strong.join("\n"), P.cyan, { bodySize: 9.2, max: 230 })
+  addCard(
+    slide,
+    mode,
+    8.38,
+    1.95,
+    3.95,
+    3.35,
+    client ? "Focos de cierre" : "Por reforzar",
+    critical.join("\n"),
+    P.orange,
+    { bodySize: 9.2, max: 230 },
+  )
+
   slide.addText(client
-    ? "Los tiempos dependen de definiciones, datos reales, responsables de validacion e insumos entregados por Chilfresh."
-    : "El piloto controlado reduce riesgo: valida flujo real antes de perseguir cierre integral de todos los modulos financieros.", {
-    x: 1.1,
-    y: 5.62,
+    ? "El hito recomendado es un piloto operativo controlado de 2 a 3 meses, condicionado a insumos, datos y validacion del cliente."
+    : "El 78% no significa cierre homogeneo: el tramo pendiente concentra reglas, datos, integraciones y validacion transversal.", {
+    x: 1.12,
+    y: 5.85,
     w: 11.1,
     h: 0.28,
-    color: mode === "dark" ? P.white : P.navy,
-    fontSize: 13,
+    color: titleColor(mode),
+    fontSize: 12.2,
     bold: true,
     align: "center",
     margin: 0,
@@ -837,66 +751,240 @@ function addEstimation(pptx, logos, mode, audience) {
   })
 }
 
-function addFutureImplementations(pptx, logos, mode, audience) {
+function addModuleDetail(pptx, logos, mode) {
+  const slide = pptx.addSlide()
+  addBase(slide, mode, logos)
+  addTitle(slide, "Detalle por componente", "Componentes mas relevantes para cierre, adopcion y valor operacional.", mode)
+
+  const cards = [
+    ["Operacion logistica", "Base, logistica, bodega y mantenedores sostienen ordenes, itinerarios e instructivos.", "100% / 94%", P.cyan],
+    ["Packing List / SC", "Packing List opera como eje documental para reportes, facturacion, costos y liquidaciones.", "En validacion", P.green],
+    ["Flores", "Puede crear itinerarios, tarifas, ordenes, instructivos y Packing List; se trabaja en facturas y liquidaciones.", flowerOverview.progress, P.green],
+    ["Facturacion", "Proformas, documentos internos, DTE/SII y Softland requieren validacion end-to-end.", "57%", P.orange],
+    ["Liquidaciones", "Reglas de calculo, rebates, prorrateos y homologacion Frutas/Flores siguen como definicion clave.", "46%", P.orange],
+    ["Cuentas Corrientes", "Saldos, anticipos, pagos y conciliaciones deben priorizarse cuando el flujo financiero este estable.", "4%", P.pink],
+  ]
+
+  cards.forEach(([title, body, status, accent], index) => {
+    const col = index % 3
+    const row = Math.floor(index / 3)
+    addCard(slide, mode, 0.78 + col * 4.1, 1.95 + row * 1.86, 3.45, 1.36, title, `${body}\n\nEstado: ${status}`, accent, {
+      bodySize: 8.5,
+      max: 185,
+    })
+  })
+}
+
+function addGapsAndRisks(pptx, logos, mode, audience) {
   const slide = pptx.addSlide()
   const client = isClientAudience(audience)
   addBase(slide, mode, logos)
   addTitle(
     slide,
-    client ? "Evolucion futura de la plataforma" : "Futuras implementaciones",
+    "Brechas y puntos de atencion",
     client
-      ? "Oportunidades posteriores al cierre base, ordenadas por horizonte y valor operacional."
-      : "Backlog estimable de mejoras, automatizacion, trazabilidad e innovacion.",
+      ? "Validaciones y definiciones necesarias para convertir avance en uso productivo."
+      : "Riesgo concentrado en reglas financieras, datos, integraciones y validacion integral.",
     mode,
   )
 
-  addMinimalPanel(
+  const riskItems = deckRisks(audience).slice(0, 5)
+  riskItems.forEach(([name, severity, comment], index) => {
+    const y = 1.95 + index * 0.74
+    slide.addText(`${index + 1}.`, {
+      x: 0.9,
+      y,
+      w: 0.32,
+      h: 0.2,
+      color: index < 3 ? P.orange : P.cyan,
+      fontSize: 12.5,
+      bold: true,
+      margin: 0,
+    })
+    slide.addText(name, {
+      x: 1.35,
+      y,
+      w: 3.55,
+      h: 0.2,
+      color: titleColor(mode),
+      fontSize: 10.6,
+      bold: true,
+      margin: 0,
+      fit: "shrink",
+    })
+    slide.addText(severity, {
+      x: 5.05,
+      y,
+      w: 1.05,
+      h: 0.18,
+      color: index < 3 ? P.orange : P.cyan,
+      fontSize: 8.4,
+      bold: true,
+      margin: 0,
+    })
+    slide.addText(shortText(comment, 112), {
+      x: 6.25,
+      y,
+      w: 5.35,
+      h: 0.22,
+      color: textColor(mode, true),
+      fontSize: 8.9,
+      margin: 0,
+      fit: "shrink",
+    })
+  })
+
+  addCard(
     slide,
     mode,
-    0.95,
-    1.88,
-    4.2,
-    1.82,
-    futureImplementationSummary.title,
-    shortText(futureImplementationSummary.reading, 250),
+    1.05,
+    5.78,
+    10.95,
+    0.58,
+    "Mitigacion",
+    "Priorizar piloto controlado, cerrar reglas por bloque, validar con datos reales y formalizar responsables de definicion Chilfresh.",
     P.cyan,
+    { titleSize: 8.7, bodySize: 8.7, bodyY: 0.2, max: 180, alt: true },
+  )
+}
+
+function addNextSteps(pptx, logos, mode, audience) {
+  const slide = pptx.addSlide()
+  const client = isClientAudience(audience)
+  addBase(slide, mode, logos)
+  addTitle(slide, "Proximos pasos", "Secuencia recomendada para llevar el avance construido a validacion productiva.", mode)
+
+  const steps = [
+    ["01", "Mesa Flores", "Validar particularidades, ventas, costos, facturas y liquidaciones."],
+    ["02", "PL/SC real", "Probar multi-supplier, contenedores, reportes y excepciones."],
+    ["03", "Reglas financieras", "Cerrar facturacion, liquidaciones, rebates y prorrateos."],
+    ["04", "Softland/SII", "Validar equivalencias, documentos y trazabilidad."],
+    ["05", client ? "Marcha blanca" : "UAT / marcha blanca", "Capacitacion, observaciones y salida controlada por etapas."],
+  ]
+
+  const y = 2.7
+  slide.addShape("line", {
+    x: 1.18,
+    y,
+    w: 10.8,
+    h: 0,
+    line: { color: isLight(mode) ? P.grayLight : "54759A", width: 1.2, transparency: isLight(mode) ? 0 : 30 },
+  })
+  steps.forEach(([num, title, body], index) => {
+    const x = 1.05 + index * 2.55
+    const accent = index === 0 ? P.green : index === 2 ? P.orange : P.cyan
+    slide.addShape("ellipse", {
+      x: x + 0.26,
+      y: y - 0.23,
+      w: 0.46,
+      h: 0.46,
+      fill: { color: accent },
+      line: { color: accent },
+    })
+    slide.addText(num, {
+      x: x + 0.26,
+      y: y - 0.08,
+      w: 0.46,
+      h: 0.12,
+      color: P.white,
+      fontSize: 8.5,
+      bold: true,
+      align: "center",
+      margin: 0,
+    })
+    slide.addText(title, {
+      x: x - 0.28,
+      y: y + 0.62,
+      w: 1.55,
+      h: 0.24,
+      color: titleColor(mode),
+      fontSize: 10.4,
+      bold: true,
+      align: "center",
+      margin: 0,
+      fit: "shrink",
+    })
+    slide.addText(shortText(body, 75), {
+      x: x - 0.42,
+      y: y + 1.0,
+      w: 1.84,
+      h: 0.52,
+      color: textColor(mode, true),
+      fontSize: 8.1,
+      align: "center",
+      margin: 0,
+      fit: "shrink",
+    })
+  })
+
+  const scenario = client ? clientScenarioTimeModel.pilot.value : scenarios.pilot.calendar
+  addCard(
+    slide,
+    mode,
+    2.55,
+    5.55,
+    8.2,
+    0.72,
+    client ? "Horizonte del gran hito" : "Escenario piloto",
+    client
+      ? `${scenario}: sujeto a insumos, reglas y responsables de validacion disponibles.`
+      : `${scenario}: validar flujo real antes de cierre integral.`,
+    P.orange,
+    { titleSize: 9.2, bodySize: 8.7, bodyY: 0.22, max: 160, alt: true },
+  )
+}
+
+function addFutureImplementations(pptx, logos, mode) {
+  const slide = pptx.addSlide()
+  addBase(slide, mode, logos)
+  addTitle(slide, "Evolucion futura de la plataforma", "Oportunidades posteriores al cierre base, ordenadas por horizonte y valor operacional.", mode)
+
+  addCard(
+    slide,
+    mode,
+    0.8,
+    1.92,
+    4.25,
+    2.05,
+    futureImplementationSummary.title,
+    futureImplementationSummary.reading,
+    P.cyan,
+    { bodySize: 9.2, max: 245 },
   )
 
   futureImplementationHorizons.forEach((item, index) => {
-    const x = 5.45 + index * 2.18
-    addMinimalPanel(
+    addCard(
       slide,
       mode,
-      x,
-      1.88,
-      1.95,
-      1.82,
+      5.38 + index * 2.22,
+      1.92,
+      1.98,
+      2.05,
       item.horizon,
-      shortText(`${item.focus}\n${item.items.slice(0, 3).join("\n")}`, 138),
-      index === 0 ? P.orange : index === 1 ? P.cyan : P.pink,
+      `${item.focus}\n${item.items.slice(0, 3).join("\n")}`,
+      index === 0 ? P.orange : index === 1 ? P.cyan : P.purple,
+      { titleSize: 10.2, bodySize: 7.6, max: 150 },
     )
   })
 
-  const priorityItems = futureImplementations
-    .filter((item) => item.priority === "Alta")
-    .slice(0, 6)
+  const priorityItems = futureImplementations.filter((item) => item.priority === "Alta").slice(0, 5)
   priorityItems.forEach((item, index) => {
-    const y = 4.14 + index * 0.33
+    const y = 4.6 + index * 0.33
     slide.addText(`${index + 1}. ${item.title}`, {
       x: 1.05,
       y,
-      w: 4.1,
+      w: 4.4,
       h: 0.18,
-      color: textColor(mode),
+      color: titleColor(mode),
       fontSize: 8.8,
       bold: true,
       margin: 0,
       fit: "shrink",
     })
     slide.addText(`${item.horizon} / ${item.category}`, {
-      x: 5.34,
+      x: 5.68,
       y,
-      w: 2.1,
+      w: 2.25,
       h: 0.16,
       color: P.orange,
       fontSize: 7.8,
@@ -905,9 +993,9 @@ function addFutureImplementations(pptx, logos, mode, audience) {
       fit: "shrink",
     })
     slide.addText(shortText(item.benefit, 105), {
-      x: 7.65,
+      x: 8.05,
       y,
-      w: 4.35,
+      w: 4.0,
       h: 0.16,
       color: textColor(mode, true),
       fontSize: 7.8,
@@ -915,227 +1003,92 @@ function addFutureImplementations(pptx, logos, mode, audience) {
       fit: "shrink",
     })
   })
-
-  slide.addText(futureImplementationSummary.note, {
-    x: 1.1,
-    y: 6.12,
-    w: 11.1,
-    h: 0.26,
-    color: textColor(mode),
-    fontSize: 10.5,
-    bold: true,
-    align: "center",
-    margin: 0,
-    fit: "shrink",
-  })
 }
 
-function addRisks(pptx, logos, mode, audience) {
-  const slide = pptx.addSlide()
-  const client = isClientAudience(audience)
-  addBase(slide, mode, logos)
-  addTitle(
-    slide,
-    "Riesgos y consideraciones",
-    client
-      ? "El foco se concentra en reglas financieras, datos, integraciones y validacion."
-      : "El cuello de botella se concentra en reglas financieras, datos, integraciones y pruebas.",
-    mode,
-  )
-  deckRisks(audience).slice(0, 6).forEach(([name, severity, comment], index) => {
-    const y = 2.12 + index * 0.52
-    slide.addText(`${index + 1}.`, {
-      x: 1.0,
-      y,
-      w: 0.32,
-      h: 0.2,
-      color: index < 4 ? P.orange : P.cyan,
-      fontSize: 12,
-      bold: true,
-      margin: 0,
-    })
-    slide.addText(name, {
-      x: 1.42,
-      y,
-      w: 3.6,
-      h: 0.2,
-      color: textColor(mode),
-      fontSize: 10.4,
-      bold: true,
-      margin: 0,
-      fit: "shrink",
-    })
-    slide.addText(severity, {
-      x: 5.24,
-      y,
-      w: 1.0,
-      h: 0.18,
-      color: index < 4 ? P.orange : P.cyan,
-      fontSize: 8.2,
-      bold: true,
-      margin: 0,
-    })
-    slide.addText(shortText(comment, 100), {
-      x: 6.4,
-      y,
-      w: 5.3,
-      h: 0.2,
-      color: textColor(mode, true),
-      fontSize: 9,
-      margin: 0,
-      fit: "shrink",
-    })
-  })
-  addMinimalPanel(slide, mode, 1.0, 5.7, 10.9, 0.62, "Lectura", "El riesgo del tramo pendiente no es volumen, sino dependencia de terceros, reglas de negocio y validacion integral.", P.orange)
-}
-
-function addMinutes(pptx, logos, mode, audience) {
-  const slide = pptx.addSlide()
-  const client = isClientAudience(audience)
-  addBase(slide, mode, logos)
-  addTitle(slide, "Resumen de minutas", client ? "Consolidado ejecutivo y decisiones relevantes." : "Consolidado total y lectura de reuniones recientes.", mode)
-  addMinimalPanel(slide, mode, 0.95, 2.0, 5.2, 2.25, minuteConsolidated.title, client ? sanitizeClientText(minuteConsolidated.focus) : minuteConsolidated.focus, P.cyan)
-  minuteSummaries.slice(-5).forEach((minute, index) => {
-    const y = 2.0 + index * 0.55
-    slide.addText(minute.date, {
-      x: 6.7,
-      y,
-      w: 1.0,
-      h: 0.18,
-      color: P.cyan,
-      fontSize: 8.4,
-      bold: true,
-      margin: 0,
-    })
-    slide.addText(minute.title, {
-      x: 7.82,
-      y,
-      w: 3.85,
-      h: 0.18,
-      color: textColor(mode),
-      fontSize: 8.7,
-      bold: true,
-      margin: 0,
-      fit: "shrink",
-    })
-    slide.addText(shortText(client ? sanitizeClientText(minute.focus) : minute.focus, 112), {
-      x: 7.82,
-      y: y + 0.2,
-      w: 4.0,
-      h: 0.16,
-      color: textColor(mode, true),
-      fontSize: 7.4,
-      margin: 0,
-      fit: "shrink",
-    })
-  })
-}
-
-function addCurrentState(pptx, logos, mode, audience) {
+function addConclusion(pptx, logos, mode, audience) {
   const slide = pptx.addSlide()
   const visibleFindings = deckFindings(audience)
   addBase(slide, mode, logos)
-  addTitle(slide, "Estado actual real", "Construccion avanzada, cierre funcional pendiente.", mode)
-  slide.addText("El proyecto existe y tiene base real.", {
-    x: 1.0,
-    y: 2.35,
-    w: 10.8,
-    h: 0.36,
-    color: textColor(mode),
-    fontFace: "Aptos Display",
-    fontSize: 23,
-    bold: true,
-    align: "center",
-    margin: 0,
-    fit: "shrink",
-  })
-  addBullets(slide, mode, [
-    visibleFindings[0][1],
-    visibleFindings[1][1],
-    visibleFindings[2][1],
-  ], 2.0, 3.45, 9.0, 0.62)
-}
+  addTitle(slide, "Conclusion", "Sintesis ejecutiva para orientar continuidad con foco y control.", mode)
 
-function addRoadmap(pptx, logos, mode, audience) {
-  const slide = pptx.addSlide()
-  const client = isClientAudience(audience)
-  addBase(slide, mode, logos)
-  addTitle(slide, "Ruta recomendada", "Piloto controlado antes de cierre integral.", mode)
-  const steps = [
-    ["01", "Estabilizar PL y SC"],
-    ["02", "Cerrar facturacion base"],
-    ["03", "Reglas financieras"],
-    ["04", client ? "Datos, validacion y marcha blanca" : "Datos, UAT y marcha blanca"],
+  addCard(
+    slide,
+    mode,
+    1.15,
+    1.78,
+    11.05,
+    1.15,
+    "Chilfresh ya cuenta con una base funcional relevante",
+    "El cierre debe priorizar definiciones, validacion con casos reales e integracion financiera.",
+    P.cyan,
+    { titleSize: 17, bodySize: 11.2, bodyY: 0.58, max: 145, alt: true },
+  )
+
+  const cards = [
+    ["1", visibleFindings[0][0], "La plataforma existe y tiene avances reales, especialmente en la capa operacional.", P.green],
+    ["2", visibleFindings[1][0], "El avance global es alto, pero el tramo pendiente concentra mayor complejidad funcional.", P.orange],
+    ["3", visibleFindings[2][0], "La continuidad debe ordenar reglas, datos, integraciones y validacion con usuarios clave.", P.cyan],
   ]
-  steps.forEach(([num, label], index) => {
-    const x = 1.08 + index * 3.0
+  cards.forEach(([num, title, body, accent], index) => {
+    const x = 1.16 + index * 3.9
+    slide.addShape("ellipse", {
+      x,
+      y: 3.75,
+      w: 0.38,
+      h: 0.38,
+      fill: { color: accent },
+      line: { color: accent },
+    })
     slide.addText(num, {
       x,
-      y: 2.38,
-      w: 1.0,
-      h: 0.36,
-      color: index === 3 ? P.orange : P.cyan,
-      fontSize: 20,
+      y: 3.88,
+      w: 0.38,
+      h: 0.1,
+      color: P.white,
+      fontSize: 7.8,
       bold: true,
       align: "center",
       margin: 0,
     })
-    slide.addShape("line", {
-      x: x + 0.95,
-      y: 2.58,
-      w: index === 3 ? 0 : 1.65,
-      h: 0,
-      line: { color: index === 3 ? P.orange : P.cyan, transparency: 12, width: 1.2 },
-    })
-    slide.addText(label, {
-      x: x - 0.34,
-      y: 3.0,
-      w: 1.7,
-      h: 0.34,
-      color: textColor(mode),
-      fontSize: 10.2,
+    slide.addText(title, {
+      x: x + 0.52,
+      y: 3.7,
+      w: 2.8,
+      h: 0.3,
+      color: titleColor(mode),
+      fontSize: 11.2,
       bold: true,
-      align: "center",
+      margin: 0,
+      fit: "shrink",
+    })
+    slide.addText(shortText(body, 105), {
+      x: x + 0.52,
+      y: 4.16,
+      w: 2.8,
+      h: 0.48,
+      color: textColor(mode, true),
+      fontSize: 8.5,
       margin: 0,
       fit: "shrink",
     })
   })
-  slide.addShape("roundRect", {
-    x: 3.4,
-    y: 5.35,
-    w: 6.55,
-    h: 0.42,
-    fill: { color: P.orange },
-    line: { color: P.orange },
-  })
-  slide.addText("Alinear responsables de definicion Chilfresh y validar el flujo financiero end-to-end.", {
-    x: 3.58,
-    y: 5.49,
-    w: 6.2,
-    h: 0.13,
-    color: P.white,
-    fontSize: 9.4,
-    bold: true,
-    align: "center",
-    margin: 0,
-    fit: "shrink",
-  })
+
+  addColorDots(slide, 5.92, 6.02)
+  addContactPills(slide, mode, SLIDE_W / 2, 6.22, true)
 }
 
 function buildDeck(pptxgen, logos, mode, audience = "internal") {
   const pptx = setupPresentation(pptxgen, mode)
   addCover(pptx, logos, mode)
-  addServicesSlide(pptx, logos, mode)
-  addSummary(pptx, logos, mode, audience)
-  addTimeline(pptx, logos, mode)
-  addFlowers(pptx, logos, mode, audience)
-  addModules(pptx, logos, mode, audience)
-  addEstimation(pptx, logos, mode, audience)
+  addExecutiveSummary(pptx, logos, mode, audience)
+  addContext(pptx, logos, mode, audience)
+  addSiteStructure(pptx, logos, mode)
+  addGeneralState(pptx, logos, mode, audience)
+  addModuleDetail(pptx, logos, mode, audience)
+  addGapsAndRisks(pptx, logos, mode, audience)
+  addNextSteps(pptx, logos, mode, audience)
   addFutureImplementations(pptx, logos, mode, audience)
-  addRisks(pptx, logos, mode, audience)
-  addMinutes(pptx, logos, mode, audience)
-  addCurrentState(pptx, logos, mode, audience)
-  addRoadmap(pptx, logos, mode, audience)
+  addConclusion(pptx, logos, mode, audience)
   return pptx
 }
 
@@ -1145,7 +1098,7 @@ export async function downloadProjectPpt(audience = "internal") {
   const pptx = buildDeck(pptxgen, logos, "dark", audience)
   const suffix = isClientAudience(audience) ? "_Cliente" : ""
   await pptx.writeFile({
-    fileName: `Reporte_Chilfresh_Assessment_Timeline${suffix}_2026-06-18.pptx`,
+    fileName: `Reporte_Chilfresh_Sitio_Ejecutivo${suffix}_Oscuro_2026-06-18.pptx`,
     compression: true,
   })
 }
@@ -1156,7 +1109,7 @@ export async function downloadProjectPptLight(audience = "internal") {
   const pptx = buildDeck(pptxgen, logos, "light", audience)
   const suffix = isClientAudience(audience) ? "_Cliente" : ""
   await pptx.writeFile({
-    fileName: `Reporte_Chilfresh_Assessment_Timeline_Claro${suffix}_2026-06-18.pptx`,
+    fileName: `Reporte_Chilfresh_Sitio_Ejecutivo${suffix}_Claro_2026-06-18.pptx`,
     compression: true,
   })
 }
