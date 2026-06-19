@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react"
 import { AlertTriangle, CalendarClock, ClipboardList, FileWarning, ListChecks, UsersRound } from "lucide-react"
-import { delayAttributionReport } from "../data/reportData"
+import { delayAttributionReport, hiddenFunctionsReport } from "../data/reportData"
 
 const viewTabs = [
   ["timeline", "Cronologia"],
   ["causes", "Causas"],
+  ["hidden", "Funciones ocultas"],
   ["fronts", "Frentes"],
   ["control", "Control"],
 ]
@@ -181,6 +182,149 @@ function ControlView() {
   )
 }
 
+function HiddenFunctionsView() {
+  return (
+    <div className="hidden-functions-view">
+      <div className="delay-kpi-strip hidden-kpi-strip">
+        {hiddenFunctionsReport.kpis.map(([label, value, help]) => (
+          <article className="delay-kpi hidden-kpi" key={label}>
+            <span>{label}</span>
+            <strong>{value}</strong>
+            <p>{help}</p>
+          </article>
+        ))}
+      </div>
+
+      <div className="hidden-overview-grid">
+        <article className="panel hidden-reading">
+          <div className="panel-title">
+            <div>
+              <h3>Funciones no evidentes y actualizaciones posteriores</h3>
+              <p className="section-note">{hiddenFunctionsReport.date} - {hiddenFunctionsReport.source}</p>
+            </div>
+          </div>
+          <p>{hiddenFunctionsReport.objective}</p>
+          <p>{hiddenFunctionsReport.reading}</p>
+        </article>
+        <aside className="delay-side-panel hidden-side-panel">
+          <FileWarning className="delay-panel-icon" aria-hidden="true" />
+          <span>Lectura interna</span>
+          <strong>Riesgo de alcance no visible</strong>
+          <p>El hallazgo complementa los atrasos atribuibles: varias definiciones llegaron tarde porque el uso real no estaba completamente visible en el levantamiento inicial.</p>
+        </aside>
+      </div>
+
+      <div className="delay-cause-grid hidden-cause-grid">
+        {hiddenFunctionsReport.categories.map((item) => (
+          <article className="delay-cause-card hidden-category-card" key={item.title}>
+            <div className="delay-cause-head">
+              <AlertTriangle aria-hidden="true" />
+              <h3>{item.title}</h3>
+            </div>
+            <p>{item.summary}</p>
+            <ul>
+              {item.examples.map((example) => <li key={example}>{example}</li>)}
+            </ul>
+            <strong>{item.impact}</strong>
+            <small>{item.action}</small>
+          </article>
+        ))}
+      </div>
+
+      <div className="hidden-split-grid">
+        <article className="panel hidden-findings-panel">
+          <div className="panel-title">
+            <div>
+              <h3>Hallazgos criticos</h3>
+              <p className="section-note">Matriz sintetica de funciones, reglas o sistemas que pueden provocar brechas de alcance y reprocesos.</p>
+            </div>
+          </div>
+          <div className="hidden-finding-list">
+            {hiddenFunctionsReport.criticalFindings.map(([id, title, level, impact, action]) => (
+              <article className="hidden-finding-row" key={id}>
+                <span>{id}</span>
+                <div>
+                  <strong>{title}</strong>
+                  <p>{impact}</p>
+                  <small>{action}</small>
+                </div>
+                <span className={`pill ${levelClass(level)}`}>{level}</span>
+              </article>
+            ))}
+          </div>
+        </article>
+
+        <article className="panel hidden-gaps-panel">
+          <div className="panel-title">
+            <div>
+              <h3>Validaciones pendientes</h3>
+              <p className="section-note">Puntos donde la evidencia existe, pero aun no basta para cerrar especificacion.</p>
+            </div>
+          </div>
+          <div className="hidden-gap-list">
+            {hiddenFunctionsReport.validationGaps.map(([point, gap]) => (
+              <div key={point}>
+                <strong>{point}</strong>
+                <span>{gap}</span>
+              </div>
+            ))}
+          </div>
+        </article>
+      </div>
+
+      <div className="hidden-split-grid">
+        <article className="panel hidden-timeline-panel">
+          <div className="panel-title">
+            <div>
+              <h3>Cronologia de hallazgos</h3>
+              <p className="section-note">Evolucion de funciones y actualizaciones detectadas despues del levantamiento inicial.</p>
+            </div>
+          </div>
+          <div className="hidden-update-list">
+            {hiddenFunctionsReport.updatesTimeline.map((item) => (
+              <article key={`${item.date}-${item.title}`}>
+                <time>{item.date}</time>
+                <div>
+                  <strong>{item.title}</strong>
+                  <p>{item.reading}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </article>
+
+        <article className="panel hidden-module-impact-panel">
+          <div className="panel-title">
+            <div>
+              <h3>Impacto por modulo</h3>
+              <p className="section-note">Lectura del efecto sobre componentes criticos del cierre.</p>
+            </div>
+          </div>
+          <div className="hidden-module-impact-list">
+            {hiddenFunctionsReport.moduleImpacts.map((item) => (
+              <article key={item.module}>
+                <strong>{item.module}</strong>
+                <p>{item.impact}</p>
+                <small>{item.risk}</small>
+              </article>
+            ))}
+          </div>
+        </article>
+      </div>
+
+      <article className="delay-control-block hidden-recommendations">
+        <div className="delay-cause-head">
+          <ListChecks aria-hidden="true" />
+          <h3>Recomendaciones de cierre posterior al levantamiento</h3>
+        </div>
+        <div className="hidden-recommendation-grid">
+          {hiddenFunctionsReport.recommendations.map((item) => <p key={item}>{item}</p>)}
+        </div>
+      </article>
+    </div>
+  )
+}
+
 export function DelayAttributionSection({ audienceMode }) {
   const [activeView, setActiveView] = useState("timeline")
   const [activeFilter, setActiveFilter] = useState("all")
@@ -227,6 +371,7 @@ export function DelayAttributionSection({ audienceMode }) {
 
       {activeView === "timeline" && <TimelineView activeFilter={activeFilter} onFilterChange={setActiveFilter} />}
       {activeView === "causes" && <CausesView />}
+      {activeView === "hidden" && <HiddenFunctionsView />}
       {activeView === "fronts" && <FrontsView />}
       {activeView === "control" && <ControlView />}
     </section>
