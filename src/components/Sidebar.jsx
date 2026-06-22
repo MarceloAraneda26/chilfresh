@@ -24,12 +24,12 @@ const navItems = [
   { href: "#futuras-implementaciones", label: "Futuras impl.", icon: Rocket },
   { href: "#riesgos", label: "Riesgos", icon: AlertTriangle },
   { href: "#retrasos-atribuibles", label: "Atrasos", icon: Clock3, internalOnly: true },
-  { href: "#pendientes-chilfresh", label: "Pendientes", icon: ClipboardList, internalOnly: true },
+  { href: "#pendientes-detalle", label: "Pendientes", icon: ClipboardList, internalOnly: true, page: "pending" },
   { href: "#minutas", label: "Minutas", icon: ScrollText },
   { href: "#conclusiones", label: "Conclusiones", icon: FileText },
 ]
 
-export function Sidebar({ activeHref, audienceMode, onNavigate }) {
+export function Sidebar({ activeHref, audienceMode, onNavigate, onOpenPendingDetail }) {
   const isClientView = audienceMode === "client"
   const visibleNavItems = isClientView ? navItems.filter((item) => !item.internalOnly) : navItems
 
@@ -44,16 +44,28 @@ export function Sidebar({ activeHref, audienceMode, onNavigate }) {
       </div>
 
       <nav className="nav">
-        {visibleNavItems.map(({ href, label, icon: Icon }) => (
-          <a
-            className={activeHref === href ? "active" : ""}
-            href={href}
-            key={href}
-            onClick={() => onNavigate(href)}
-          >
-            <Icon className="icon" aria-hidden="true" />
-            {label}
-          </a>
+        {visibleNavItems.map(({ href, label, icon: Icon, page }) => (
+          page === "pending" ? (
+            <button
+              className={activeHref === href ? "active" : ""}
+              key={href}
+              type="button"
+              onClick={onOpenPendingDetail}
+            >
+              <Icon className="icon" aria-hidden="true" />
+              {label}
+            </button>
+          ) : (
+            <a
+              className={activeHref === href ? "active" : ""}
+              href={href}
+              key={href}
+              onClick={() => onNavigate(href)}
+            >
+              <Icon className="icon" aria-hidden="true" />
+              {label}
+            </a>
+          )
         ))}
       </nav>
 

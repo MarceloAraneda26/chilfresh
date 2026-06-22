@@ -1,4 +1,4 @@
-import { CalendarClock, ClipboardList, FileWarning, ListChecks, Send, UsersRound } from "lucide-react"
+import { ArrowRight, CalendarClock, ClipboardList, FileWarning, ListChecks, Send, UsersRound } from "lucide-react"
 import { pendingSummaryReport } from "../data/reportData"
 
 function priorityClass(priority) {
@@ -13,7 +13,7 @@ function frontClass(tone) {
   return ""
 }
 
-export function PendingSummarySection({ audienceMode }) {
+export function PendingSummarySection({ audienceMode, onOpenPendingDetail }) {
   if (audienceMode === "client") return null
 
   return (
@@ -25,6 +25,10 @@ export function PendingSummarySection({ audienceMode }) {
             Vista interna basada en {pendingSummaryReport.source}. Fuente: {pendingSummaryReport.basis}
           </p>
         </div>
+        <button className="btn ppt-download" type="button" onClick={onOpenPendingDetail}>
+          Abrir vista detallada
+          <ArrowRight className="icon" aria-hidden="true" />
+        </button>
       </div>
 
       <div className="pending-intro-grid">

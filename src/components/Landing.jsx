@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowUpRight, BarChart3, Eye, KeyRound, Moon, Settings2, Sun } from "lucide-react"
+import { ArrowRight, ArrowUpRight, BarChart3, ClipboardList, Eye, KeyRound, Moon, Settings2, Sun } from "lucide-react"
 import chilfreshMark from "../assets/brand/chilfresh-mark.png"
 import tiboxMark from "../assets/brand/tibox-mark.png"
 import { projectMilestones } from "../data/reportData"
@@ -7,7 +7,7 @@ const timelinePreviewIds = ["h-assessment", "h-2026-01-29", "h-2026-03-31", "h-2
 
 const GESTION_CHILFRESH_URL = "https://gestionchilfresh.tiboxlab.cl/login"
 
-export function Landing({ themeMode, onThemeModeChange, onOpenReport, onOpenExecutiveSummary }) {
+export function Landing({ themeMode, onThemeModeChange, onOpenReport, onOpenExecutiveSummary, onOpenPendingDetail }) {
   const timelinePreview = timelinePreviewIds
     .map((id) => projectMilestones.find((item) => item.id === id))
     .filter(Boolean)
@@ -132,6 +132,10 @@ export function Landing({ themeMode, onThemeModeChange, onOpenReport, onOpenExec
             <button className="btn" type="button" onClick={() => onOpenReport("internal")}>
               Ver linea de tiempo completa
               <ArrowRight className="icon" aria-hidden="true" />
+            </button>
+            <button className="btn ppt-download" type="button" onClick={onOpenPendingDetail}>
+              <ClipboardList className="icon" aria-hidden="true" />
+              Revisar pendientes
             </button>
           </div>
         </article>

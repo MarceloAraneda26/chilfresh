@@ -9,6 +9,7 @@ import { Hero } from "./components/Hero"
 import { Landing } from "./components/Landing"
 import { MinutesSection } from "./components/MinutesSection"
 import { ModulesSection } from "./components/ModulesSection"
+import { PendingDetailPage } from "./components/PendingDetailPage"
 import { PendingSummarySection } from "./components/PendingSummarySection"
 import { ReportingSection } from "./components/ReportingSection"
 import { RisksSection } from "./components/RisksSection"
@@ -31,6 +32,21 @@ export default function App() {
     window.localStorage.setItem("chilfresh-report-theme", themeMode)
   }, [themeMode])
 
+  useEffect(() => {
+    function handleHashRoute() {
+      if (window.location.hash !== "#pendientes-detalle") return
+      setAudienceMode("internal")
+      setReportMode("pending")
+      setActiveHref("#pendientes-detalle")
+      setNavOpen(false)
+      window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 0)
+    }
+
+    handleHashRoute()
+    window.addEventListener("hashchange", handleHashRoute)
+    return () => window.removeEventListener("hashchange", handleHashRoute)
+  }, [])
+
   function handleNavigate(href) {
     setActiveHref(href)
     setNavOpen(false)
@@ -41,6 +57,7 @@ export default function App() {
     setReportMode("full")
     setActiveHref("#linea-tiempo")
     setNavOpen(false)
+    window.history.pushState(null, "", "#linea-tiempo")
     window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 0)
   }
 
@@ -53,14 +70,42 @@ export default function App() {
   function handleGoHome() {
     setReportMode("landing")
     setNavOpen(false)
+    window.history.pushState(null, "", `${window.location.pathname}${window.location.search}`)
     window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 0)
+  }
+
+  function handleOpenPendingDetail() {
+    setAudienceMode("internal")
+    setReportMode("pending")
+    setActiveHref("#pendientes-detalle")
+    setNavOpen(false)
+    window.history.pushState(null, "", "#pendientes-detalle")
+    window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 0)
+  }
+
+  function handleBackToReport() {
+    setAudienceMode("internal")
+    setReportMode("full")
+    setActiveHref("#pendientes-chilfresh")
+    setNavOpen(false)
+    window.history.pushState(null, "", "#pendientes-chilfresh")
+    window.setTimeout(() => {
+      document.getElementById("pendientes-chilfresh")?.scrollIntoView({ behavior: "smooth" })
+    }, 0)
   }
 
   return (
     <div
-      className={`app theme-${themeMode} ${reportMode === "executive" || reportMode === "landing" ? "executive-mode" : ""} ${navOpen ? "nav-open" : ""} ${reportMode === "full" && audienceMode === "client" ? "client-view" : ""}`}
+      className={`app theme-${themeMode} ${reportMode === "executive" || reportMode === "landing" || reportMode === "pending" ? "executive-mode" : ""} ${navOpen ? "nav-open" : ""} ${reportMode === "full" && audienceMode === "client" ? "client-view" : ""}`}
     >
-      {reportMode === "full" && <Sidebar activeHref={activeHref} audienceMode={audienceMode} onNavigate={handleNavigate} />}
+      {reportMode === "full" && (
+        <Sidebar
+          activeHref={activeHref}
+          audienceMode={audienceMode}
+          onNavigate={handleNavigate}
+          onOpenPendingDetail={handleOpenPendingDetail}
+        />
+      )}
       <main className="content">
         {reportMode === "landing" && (
           <Landing
@@ -68,6 +113,7 @@ export default function App() {
             onThemeModeChange={setThemeMode}
             onOpenReport={handleOpenReport}
             onOpenExecutiveSummary={handleOpenExecutiveSummary}
+            onOpenPendingDetail={handleOpenPendingDetail}
           />
         )}
         {reportMode === "executive" && (
@@ -98,10 +144,18 @@ export default function App() {
             <FutureImplementationsSection audienceMode={audienceMode} />
             <RisksSection audienceMode={audienceMode} />
             <DelayAttributionSection audienceMode={audienceMode} />
-            <PendingSummarySection audienceMode={audienceMode} />
+            <PendingSummarySection audienceMode={audienceMode} onOpenPendingDetail={handleOpenPendingDetail} />
             <MinutesSection audienceMode={audienceMode} />
             <ConclusionsSection audienceMode={audienceMode} />
           </>
+        )}
+        {reportMode === "pending" && (
+          <PendingDetailPage
+            themeMode={themeMode}
+            onThemeModeChange={setThemeMode}
+            onGoHome={handleGoHome}
+            onBackToReport={handleBackToReport}
+          />
         )}
       </main>
     </div>
