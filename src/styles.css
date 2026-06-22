@@ -3664,16 +3664,279 @@ html[data-theme="light"] .effort-ring {
   line-height: 1.42;
 }
 
+.pending-section {
+  scroll-margin-top: 24px;
+}
+
+.pending-intro-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.pending-reading p {
+  margin: 0;
+  color: rgba(209, 213, 219, 0.82);
+  line-height: 1.55;
+}
+
+.pending-availability-card,
+.pending-priority-panel,
+.pending-front-card,
+.pending-action-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
+    rgba(17, 24, 39, 0.78);
+  border: 1px solid rgba(214, 242, 252, 0.16);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+}
+
+.pending-availability-card {
+  display: grid;
+  gap: 10px;
+  align-content: center;
+  min-height: 190px;
+  padding: 18px;
+  border-left: 4px solid #ff7900;
+}
+
+.pending-card-icon {
+  width: 34px;
+  height: 34px;
+  color: #ff7900;
+}
+
+.pending-availability-card span {
+  color: rgba(209, 213, 219, 0.82);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.pending-availability-card strong {
+  color: #fff;
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+.pending-availability-card p,
+.pending-front-card p,
+.pending-front-card li,
+.pending-front-card strong,
+.pending-action-card li,
+.pending-action-card p,
+.pending-priority-row p,
+.pending-priority-row small,
+.pending-priority-row em {
+  color: rgba(209, 213, 219, 0.82);
+  line-height: 1.42;
+}
+
+.pending-availability-card p,
+.pending-front-card p,
+.pending-priority-row p {
+  margin: 0;
+}
+
+.pending-kpi:nth-child(1) {
+  border-left-color: #ce3f5e;
+}
+
+.pending-kpi:nth-child(2) {
+  border-left-color: #ff7900;
+}
+
+.pending-kpi:nth-child(3) {
+  border-left-color: #0e9bdb;
+}
+
+.pending-kpi:nth-child(4) {
+  border-left-color: #c0c700;
+}
+
+.pending-priority-panel,
+.pending-action-card {
+  padding: 16px;
+}
+
+.pending-priority-panel h3,
+.pending-action-card h3 {
+  color: #fff;
+}
+
+.pending-priority-list {
+  display: grid;
+  gap: 10px;
+}
+
+.pending-priority-row {
+  display: grid;
+  grid-template-columns: minmax(170px, 0.72fr) minmax(260px, 1.2fr) minmax(170px, 0.78fr) minmax(220px, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 12px;
+  background: rgba(214, 242, 252, 0.055);
+  border: 1px solid rgba(214, 242, 252, 0.12);
+  border-radius: 8px;
+}
+
+.pending-priority-row > div {
+  display: grid;
+  gap: 8px;
+}
+
+.pending-priority-row strong {
+  color: #fff;
+  font-size: 14px;
+}
+
+.pending-priority-row small {
+  display: block;
+  font-size: 12px;
+}
+
+.pending-priority-row em {
+  font-size: 12px;
+  font-style: normal;
+}
+
+.pending-front-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.pending-front-card {
+  min-height: 312px;
+  padding: 16px;
+  border-top: 4px solid #0e9bdb;
+}
+
+.pending-front-card.warn {
+  border-top-color: #ff7900;
+}
+
+.pending-front-card.danger {
+  border-top-color: #ce3f5e;
+}
+
+.pending-front-head {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.pending-front-head svg {
+  width: 22px;
+  height: 22px;
+  color: #0e9bdb;
+  flex: 0 0 auto;
+}
+
+.pending-front-card.warn .pending-front-head svg {
+  color: #ff7900;
+}
+
+.pending-front-card.danger .pending-front-head svg {
+  color: #ce3f5e;
+}
+
+.pending-front-head h3 {
+  margin: 0 0 4px;
+  color: #fff;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.pending-front-head span {
+  color: rgba(209, 213, 219, 0.72);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.pending-front-card ul {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0;
+  padding-left: 18px;
+  font-size: 12px;
+}
+
+.pending-front-card li::marker,
+.pending-action-card li::marker,
+.pending-message-list li::marker {
+  color: #0e9bdb;
+  font-weight: 900;
+}
+
+.pending-front-card strong {
+  display: block;
+  margin-top: 10px;
+  color: rgba(214, 242, 252, 0.82);
+  font-size: 12px;
+}
+
+.pending-action-grid,
+.pending-close-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.pending-action-card ol,
+.pending-message-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+}
+
+.pending-next-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.pending-next-grid p {
+  min-height: 112px;
+  margin: 0;
+  padding: 12px;
+  background: rgba(214, 242, 252, 0.055);
+  border: 1px solid rgba(214, 242, 252, 0.12);
+  border-radius: 8px;
+  font-size: 12px;
+}
+
 html[data-theme="light"] .delay-reading p,
 html[data-theme="light"] .hidden-reading p,
+html[data-theme="light"] .pending-reading p,
 html[data-theme="light"] .delay-document-card span,
 html[data-theme="light"] .delay-document-card p,
 html[data-theme="light"] .delay-kpi span,
 html[data-theme="light"] .delay-kpi p,
 html[data-theme="light"] .delay-side-panel span,
 html[data-theme="light"] .delay-side-panel p,
+html[data-theme="light"] .pending-availability-card span,
+html[data-theme="light"] .pending-availability-card p,
 html[data-theme="light"] .delay-cause-card p,
 html[data-theme="light"] .delay-cause-card li,
+html[data-theme="light"] .pending-front-card p,
+html[data-theme="light"] .pending-front-card li,
+html[data-theme="light"] .pending-front-card strong,
+html[data-theme="light"] .pending-front-head span,
+html[data-theme="light"] .pending-action-card li,
+html[data-theme="light"] .pending-action-card p,
+html[data-theme="light"] .pending-priority-row p,
+html[data-theme="light"] .pending-priority-row small,
+html[data-theme="light"] .pending-priority-row em,
 html[data-theme="light"] .delay-front-row span,
 html[data-theme="light"] .delay-front-row p,
 html[data-theme="light"] .delay-priority-list,
@@ -3697,7 +3960,11 @@ html[data-theme="light"] .delay-side-panel,
 html[data-theme="light"] .delay-cause-card,
 html[data-theme="light"] .delay-front-row,
 html[data-theme="light"] .delay-control-block,
-html[data-theme="light"] .delay-event-row {
+html[data-theme="light"] .delay-event-row,
+html[data-theme="light"] .pending-availability-card,
+html[data-theme="light"] .pending-priority-panel,
+html[data-theme="light"] .pending-front-card,
+html[data-theme="light"] .pending-action-card {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.84)),
     rgba(255, 255, 255, 0.9);
@@ -3709,7 +3976,9 @@ html[data-theme="light"] .hidden-finding-row,
 html[data-theme="light"] .hidden-gap-list div,
 html[data-theme="light"] .hidden-update-list article,
 html[data-theme="light"] .hidden-module-impact-list article,
-html[data-theme="light"] .hidden-recommendation-grid p {
+html[data-theme="light"] .hidden-recommendation-grid p,
+html[data-theme="light"] .pending-priority-row,
+html[data-theme="light"] .pending-next-grid p {
   background: rgba(30, 44, 69, 0.045);
   border-color: rgba(30, 44, 69, 0.1);
 }
@@ -3717,10 +3986,15 @@ html[data-theme="light"] .hidden-recommendation-grid p {
 html[data-theme="light"] .delay-document-card strong,
 html[data-theme="light"] .delay-kpi strong,
 html[data-theme="light"] .delay-side-panel strong,
+html[data-theme="light"] .pending-availability-card strong,
 html[data-theme="light"] .delay-cause-card h3,
 html[data-theme="light"] .delay-cause-card strong,
+html[data-theme="light"] .pending-front-head h3,
+html[data-theme="light"] .pending-priority-row strong,
 html[data-theme="light"] .delay-front-row strong,
 html[data-theme="light"] .delay-control-block h3,
+html[data-theme="light"] .pending-priority-panel h3,
+html[data-theme="light"] .pending-action-card h3,
 html[data-theme="light"] .hidden-finding-row strong,
 html[data-theme="light"] .hidden-gap-list strong,
 html[data-theme="light"] .hidden-update-list strong,
@@ -4101,14 +4375,19 @@ html[data-theme="light"] .delay-conclusion-grid p {
   .delay-front-layout,
   .delay-control-layout,
   .hidden-overview-grid,
-  .hidden-split-grid {
+  .hidden-split-grid,
+  .pending-intro-grid,
+  .pending-action-grid,
+  .pending-close-grid {
     grid-template-columns: 1fr;
   }
 
   .delay-kpi-strip,
   .delay-cause-grid,
   .delay-conclusion-grid,
-  .hidden-recommendation-grid {
+  .hidden-recommendation-grid,
+  .pending-front-grid,
+  .pending-next-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -4120,6 +4399,7 @@ html[data-theme="light"] .delay-conclusion-grid p {
 @media (max-width: 880px) {
   .delay-event-row,
   .delay-front-row,
+  .pending-priority-row,
   .hidden-finding-row,
   .hidden-update-list article {
     grid-template-columns: 1fr;
@@ -4136,7 +4416,9 @@ html[data-theme="light"] .delay-conclusion-grid p {
   .delay-cause-grid,
   .delay-field-grid,
   .delay-conclusion-grid,
-  .hidden-recommendation-grid {
+  .hidden-recommendation-grid,
+  .pending-front-grid,
+  .pending-next-grid {
     grid-template-columns: 1fr;
   }
 

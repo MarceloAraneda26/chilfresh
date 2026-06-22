@@ -3,6 +3,7 @@ import {
   BarChart3,
   CheckCircle2,
   Clock3,
+  ClipboardList,
   FileText,
   LayoutDashboard,
   Leaf,
@@ -23,6 +24,7 @@ const navItems = [
   { href: "#futuras-implementaciones", label: "Futuras impl.", icon: Rocket },
   { href: "#riesgos", label: "Riesgos", icon: AlertTriangle },
   { href: "#retrasos-atribuibles", label: "Atrasos", icon: Clock3, internalOnly: true },
+  { href: "#pendientes-chilfresh", label: "Pendientes", icon: ClipboardList, internalOnly: true },
   { href: "#minutas", label: "Minutas", icon: ScrollText },
   { href: "#conclusiones", label: "Conclusiones", icon: FileText },
 ]

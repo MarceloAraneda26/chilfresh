@@ -9,6 +9,7 @@ import { Hero } from "./components/Hero"
 import { Landing } from "./components/Landing"
 import { MinutesSection } from "./components/MinutesSection"
 import { ModulesSection } from "./components/ModulesSection"
+import { PendingSummarySection } from "./components/PendingSummarySection"
 import { ReportingSection } from "./components/ReportingSection"
 import { RisksSection } from "./components/RisksSection"
 import { Sidebar } from "./components/Sidebar"
@@ -97,6 +98,7 @@ export default function App() {
             <FutureImplementationsSection audienceMode={audienceMode} />
             <RisksSection audienceMode={audienceMode} />
             <DelayAttributionSection audienceMode={audienceMode} />
+            <PendingSummarySection audienceMode={audienceMode} />
             <MinutesSection audienceMode={audienceMode} />
             <ConclusionsSection audienceMode={audienceMode} />
           </>
