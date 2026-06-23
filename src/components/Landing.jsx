@@ -68,6 +68,13 @@ export function Landing({ themeMode, onThemeModeChange, onOpenReport, onOpenExec
             publico: seguimiento interno de TIBOX, lectura ejecutiva para Chilfresh, o una sintesis
             de una pagina para decisiones rapidas.
           </p>
+          <div className="landing-hero-actions">
+            <button className="btn primary landing-pending-cta" type="button" onClick={onOpenPendingDetail}>
+              <ClipboardList className="icon" aria-hidden="true" />
+              Revisar pendientes actuales
+              <ArrowRight className="icon" aria-hidden="true" />
+            </button>
+          </div>
         </div>
       </section>
 
